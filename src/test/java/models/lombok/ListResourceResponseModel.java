@@ -1,12 +1,17 @@
 package models.lombok;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
 public class ListResourceResponseModel {
-    int page, per_page, total, total_pages;
+    @JsonProperty("per_page")
+    int per_page;
+    @JsonProperty("total_pages")
+    int total_pages;
+    int page, total;
     Support support;
     List<DataI> data;
 
@@ -18,6 +23,8 @@ public class ListResourceResponseModel {
     @Data
     public static class DataI {
         int id, year;
-        String name, color, pantone_value;
+        @JsonProperty("pantone_value")
+        String pantone_value;
+        String name, color;
     }
 }

@@ -1,14 +1,18 @@
 package models.lombok;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
-import java.util.Collection;
 import java.util.List;
 
 
 @Data
 public class ListUsersResponseModel {
-    int page, per_page, total, total_pages;
+    @JsonProperty("per_page")
+    int per_page;
+    @JsonProperty("total_pages")
+    int total_pages;
+    int page, total;
     Support support;
     List<DataI> data;
 
@@ -20,6 +24,10 @@ public class ListUsersResponseModel {
     @Data
     public static class DataI {
         int id;
-        String email, first_name, last_name, avatar;
+        @JsonProperty("first_name")
+        String first_name;
+        @JsonProperty("last_name")
+        String last_name;
+        String email, avatar;
     }
 }
