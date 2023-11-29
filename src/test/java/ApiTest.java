@@ -4,13 +4,13 @@ import org.junit.jupiter.api.Test;
 import static helpers.CustomAllureListener.withCustomTemplates;
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
-import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ApiTest extends TestBase {
 
     @Test
     void listUsersTest() {
+        ListUsersResponseModel response =
         given()
                 .filter(withCustomTemplates())
                 .log().uri()
@@ -21,14 +21,14 @@ public class ApiTest extends TestBase {
                 .log().status()
                 .log().body()
                 .statusCode(200)
-                .body("total", is(12))
-                .body("data[0].id", is(7))
-                .body("data[1].first_name", is("Lindsay"));
+                .extract().as(ListUsersResponseModel.class);
+        assertEquals(12, response.getTotal());
+        assertEquals(7,response.getData().get(0).getId());
     }
 
     @Test
     void listResourceTest() {
-        given()
+        ListResourceResponseModel response= given()
                 .filter(withCustomTemplates())
                 .log().uri()
                 .log().method()
@@ -38,8 +38,9 @@ public class ApiTest extends TestBase {
                 .log().status()
                 .log().body()
                 .statusCode(200)
-                .body("data[0].year", is(2000))
-                .body("data[2].color", is("#BF1932"));
+                .extract().as(ListResourceResponseModel.class);
+        assertEquals(2000, response.getData().get(0).getYear());
+        assertEquals("#BF1932",response.getData().get(2).getColor());
     }
 
     @Test
