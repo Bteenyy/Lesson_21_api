@@ -1,8 +1,10 @@
+import models.lombok.*;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ApiTest extends TestBase {
 
@@ -39,10 +41,13 @@ public class ApiTest extends TestBase {
 
     @Test
     void createTest() {
-        given()
+        CreateBodyModel createBodyModel = new CreateBodyModel();
+        createBodyModel.setName("morpheus");
+        createBodyModel.setJob("leader");
+        CreateResponseModel response = given()
                 .log().uri()
                 .log().method()
-                .body("{\n" + "\"name\": \"morpheus\",\n" + "\"job\": \"leader\"\n" + "}")
+                .body(createBodyModel)
                 .contentType(JSON)
                 .when()
                 .post("/users")
@@ -50,16 +55,20 @@ public class ApiTest extends TestBase {
                 .log().status()
                 .log().body()
                 .statusCode(201)
-                .body("name", is("morpheus"))
-                .body("job", is("leader"));
+                .extract().as(CreateResponseModel.class);
+        assertEquals("morpheus", response.getName());
+        assertEquals("leader", response.getJob());
     }
 
     @Test
     void successfulRegisterTest() {
-        given()
+        SuccessfulRegisterBodyModel successfulRegisterBodyModel = new SuccessfulRegisterBodyModel();
+        successfulRegisterBodyModel.setEmail("eve.holt@reqres.in");
+        successfulRegisterBodyModel.setPassword("pistol");
+        SuccessfulRegisterResponseModel response = given()
                 .log().uri()
                 .log().method()
-                .body("{\n" + "\"email\": \"eve.holt@reqres.in\",\n" + "\"password\": \"pistol\"\n" + "}")
+                .body(successfulRegisterBodyModel)
                 .contentType(JSON)
                 .when()
                 .post("/register")
@@ -67,16 +76,19 @@ public class ApiTest extends TestBase {
                 .log().status()
                 .log().body()
                 .statusCode(200)
-                .body("id", is(4))
-                .body("token", is("QpwL5tke4Pnpja7X4"));
+                .extract().as(SuccessfulRegisterResponseModel.class);
+        assertEquals(4, response.getId());
+        assertEquals("QpwL5tke4Pnpja7X4", response.getToken());
     }
 
     @Test
     void unsuccessfulRegisterTest() {
-        given()
+        UnsuccessfulRegisterBodyModel unsuccessfulRegisterBodyModel = new UnsuccessfulRegisterBodyModel();
+        unsuccessfulRegisterBodyModel.setEmail("sydney@fife");
+        UnsuccessfulRegisterResponseModel response = given()
                 .log().uri()
                 .log().method()
-                .body("{\n" + "\"email\": \"sydney@fife\"\n" + "}")
+                .body(unsuccessfulRegisterBodyModel)
                 .contentType(JSON)
                 .when()
                 .post("/register")
@@ -84,6 +96,7 @@ public class ApiTest extends TestBase {
                 .log().status()
                 .log().body()
                 .statusCode(400)
-                .body("error", is("Missing password"));
+                .extract().as(UnsuccessfulRegisterResponseModel.class);
+        assertEquals("Missing password", response.getError());
     }
 }
