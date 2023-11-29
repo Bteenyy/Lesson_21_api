@@ -1,4 +1,3 @@
-import io.qameta.allure.restassured.AllureRestAssured;
 import models.lombok.*;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +29,7 @@ public class ApiTest extends TestBase {
     @Test
     void listResourceTest() {
         given()
-                .filter(new AllureRestAssured())
+                .filter(withCustomTemplates())
                 .log().uri()
                 .log().method()
                 .when()
@@ -49,7 +48,7 @@ public class ApiTest extends TestBase {
         createBodyModel.setName("morpheus");
         createBodyModel.setJob("leader");
         CreateResponseModel response = given()
-                .filter(new AllureRestAssured())
+                .filter(withCustomTemplates())
                 .log().uri()
                 .log().method()
                 .body(createBodyModel)
@@ -71,7 +70,7 @@ public class ApiTest extends TestBase {
         successfulRegisterBodyModel.setEmail("eve.holt@reqres.in");
         successfulRegisterBodyModel.setPassword("pistol");
         SuccessfulRegisterResponseModel response = given()
-                .filter(new AllureRestAssured())
+                .filter(withCustomTemplates())
                 .log().uri()
                 .log().method()
                 .body(successfulRegisterBodyModel)
@@ -92,7 +91,7 @@ public class ApiTest extends TestBase {
         UnsuccessfulRegisterBodyModel unsuccessfulRegisterBodyModel = new UnsuccessfulRegisterBodyModel();
         unsuccessfulRegisterBodyModel.setEmail("sydney@fife");
         UnsuccessfulRegisterResponseModel response = given()
-                .filter(new AllureRestAssured())
+                .filter(withCustomTemplates())
                 .log().uri()
                 .log().method()
                 .body(unsuccessfulRegisterBodyModel)
