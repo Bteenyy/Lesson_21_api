@@ -1,27 +1,29 @@
 import models.lombok.*;
 import org.junit.jupiter.api.Test;
 
-import static helpers.CustomAllureListener.withCustomTemplates;
 import static io.qameta.allure.Allure.step;
 import static io.restassured.RestAssured.given;
-import static io.restassured.http.ContentType.JSON;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static spec.CreateSpec.createRequestSpec;
+import static spec.CreateSpec.createResponseSpec;
+import static spec.ListResourceSpec.listResourceRequestSpec;
+import static spec.ListResourceSpec.listResourceResponseSpec;
+import static spec.ListUserRequestSpec.listUserRequestSpec;
+import static spec.ListUserRequestSpec.listUserResponseSpec;
+import static spec.SuccessfulRegisterSpec.successfulRequestSpec;
+import static spec.SuccessfulRegisterSpec.successfulResponseSpec;
+import static spec.UnsuccessfulRequestSpec.*;
 
 public class ApiTest extends TestBase {
 
     @Test
     void listUsersTest() {
         ListUsersResponseModel response = step("Make request", () ->
-                given()
-                        .filter(withCustomTemplates())
-                        .log().uri()
-                        .log().method()
+                given(listUserRequestSpec)
                         .when()
                         .get("/users?page=2")
                         .then()
-                        .log().status()
-                        .log().body()
-                        .statusCode(200)
+                        .spec(listUserResponseSpec)
                         .extract().as(ListUsersResponseModel.class));
         step("Verify responce", () -> {
             assertEquals(12, response.getTotal());
@@ -32,16 +34,11 @@ public class ApiTest extends TestBase {
     @Test
     void listResourceTest() {
         ListResourceResponseModel response = step("Make request", () ->
-                given()
-                        .filter(withCustomTemplates())
-                        .log().uri()
-                        .log().method()
+                given(listResourceRequestSpec)
                         .when()
                         .get("/unknown")
                         .then()
-                        .log().status()
-                        .log().body()
-                        .statusCode(200)
+                        .spec(listResourceResponseSpec)
                         .extract().as(ListResourceResponseModel.class));
         step("Verify responce", () -> {
             assertEquals(2000, response.getData().get(0).getYear());
@@ -55,18 +52,12 @@ public class ApiTest extends TestBase {
         createBodyModel.setName("morpheus");
         createBodyModel.setJob("leader");
         CreateResponseModel response = step("Make request", () ->
-                given()
-                        .filter(withCustomTemplates())
-                        .log().uri()
-                        .log().method()
+                given(createRequestSpec)
                         .body(createBodyModel)
-                        .contentType(JSON)
                         .when()
                         .post("/users")
                         .then()
-                        .log().status()
-                        .log().body()
-                        .statusCode(201)
+                        .spec(createResponseSpec)
                         .extract().as(CreateResponseModel.class));
         step("Verify responce", () -> {
             assertEquals("morpheus", response.getName());
@@ -80,18 +71,12 @@ public class ApiTest extends TestBase {
         successfulRegisterBodyModel.setEmail("eve.holt@reqres.in");
         successfulRegisterBodyModel.setPassword("pistol");
         SuccessfulRegisterResponseModel response = step("Make request", () ->
-                given()
-                        .filter(withCustomTemplates())
-                        .log().uri()
-                        .log().method()
+                given(successfulRequestSpec)
                         .body(successfulRegisterBodyModel)
-                        .contentType(JSON)
                         .when()
                         .post("/register")
                         .then()
-                        .log().status()
-                        .log().body()
-                        .statusCode(200)
+                        .spec(successfulResponseSpec)
                         .extract().as(SuccessfulRegisterResponseModel.class));
         step("Verify responce", () -> {
             assertEquals(4, response.getId());
@@ -104,18 +89,12 @@ public class ApiTest extends TestBase {
         UnsuccessfulRegisterBodyModel unsuccessfulRegisterBodyModel = new UnsuccessfulRegisterBodyModel();
         unsuccessfulRegisterBodyModel.setEmail("sydney@fife");
         UnsuccessfulRegisterResponseModel response = step("Make request", () ->
-                given()
-                        .filter(withCustomTemplates())
-                        .log().uri()
-                        .log().method()
+                given(unsuccessfulRequestSpec)
                         .body(unsuccessfulRegisterBodyModel)
-                        .contentType(JSON)
                         .when()
                         .post("/register")
                         .then()
-                        .log().status()
-                        .log().body()
-                        .statusCode(400)
+                        .spec(unsuccessfulResponseSpec)
                         .extract().as(UnsuccessfulRegisterResponseModel.class));
         step("Verify responce", () ->
                 assertEquals("Missing password", response.getError()));
