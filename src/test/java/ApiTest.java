@@ -12,7 +12,8 @@ import static spec.ListUserRequestSpec.listUserRequestSpec;
 import static spec.ListUserRequestSpec.listUserResponseSpec;
 import static spec.SuccessfulRegisterSpec.successfulRequestSpec;
 import static spec.SuccessfulRegisterSpec.successfulResponseSpec;
-import static spec.UnsuccessfulRequestSpec.*;
+import static spec.UnsuccessfulRequestSpec.unsuccessfulRequestSpec;
+import static spec.UnsuccessfulRequestSpec.unsuccessfulResponseSpec;
 
 public class ApiTest extends TestBase {
 
